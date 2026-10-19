@@ -1,0 +1,82 @@
+### Variables
+@baseUrl = http://localhost:3000
+@apiKey = layla_warehouse_secret_key_change_me
+@testPhone = 15551234567
+
+### 1. Health Check (Public)
+GET {{baseUrl}}/health
+
+### 2. Detailed Daemon & Queue Status
+GET {{baseUrl}}/api/status
+Authorization: Bearer {{apiKey}}
+
+### 3. Verify if a Phone Number is on WhatsApp
+GET {{baseUrl}}/api/messages/verify-number/{{testPhone}}
+Authorization: Bearer {{apiKey}}
+
+### 4. Send Simple Text Message (Enqueued asynchronously)
+POST {{baseUrl}}/api/messages/send-text
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "to": "{{testPhone}}",
+  "message": "📦 Warehouse Notification: Order #4829 has been packed and is ready for pickup!",
+  "waitForDelivery": false
+}
+
+### 5. Send Text Message (Wait for delivery confirmation)
+POST {{baseUrl}}/api/messages/send-text
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "to": "{{testPhone}}",
+  "message": "🚚 Dispatch Alert: Driver is on the way with your delivery.",
+  "waitForDelivery": true
+}
+
+### 6. Send Document / PDF Invoice via URL
+POST {{baseUrl}}/api/messages/send-media
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "to": "{{testPhone}}",
+  "mediaType": "document",
+  "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+  "fileName": "Invoice_4829.pdf",
+  "caption": "Attached is your official packing slip and invoice.",
+  "mimetype": "application/pdf",
+  "waitForDelivery": false
+}
+
+### 7. Send Image via URL
+POST {{baseUrl}}/api/messages/send-media
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "to": "{{testPhone}}",
+  "mediaType": "image",
+  "url": "https://picsum.photos/600/400",
+  "caption": "Warehouse parcel photo for verification.",
+  "waitForDelivery": false
+}
+
+### 8. Inspect Outbound Message Queue
+GET {{baseUrl}}/api/queue
+Authorization: Bearer {{apiKey}}
+
+### 9. Request 8-Digit Pairing Code (Alternative to QR Code)
+POST {{baseUrl}}/api/auth/pairing-code
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "phone": "{{testPhone}}"
+}
+
+### 10. Logout & Reset WhatsApp Session
+POST {{baseUrl}}/api/auth/logout
+Authorization: Bearer {{apiKey}}

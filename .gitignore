@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+session_auth/
+uploads/
+*.log
+.DS_Store
+.agents/
+.agent/
+.claude/
+.gemini/
